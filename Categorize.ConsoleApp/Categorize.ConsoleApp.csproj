@@ -8,14 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.6.0.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Infra\Database\db.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <ProjectReference Include="..\Categorize.Application\Categorize.Application.csproj" />
+    <ProjectReference Include="..\Categorize.Domain\Categorize.Domain.csproj" />
   </ItemGroup>
 
 </Project>
