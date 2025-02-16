@@ -1,33 +1,18 @@
 ﻿using Categorize.Application.Interfaces;
-using Categorize.Domain.Categories;
 using Categorize.Domain.Interfaces;
 
 namespace Categorize.Application.Services
 {
-    public class CategorizerService: ICategorizerService
+    public class CategorizerService(ICategoryService categoryService) : ICategorizerService
     {
-        private readonly List<ICategory> _categories;
+        private readonly ICategoryService _categoryService = categoryService;
 
-        public CategorizerService()
+        public async Task<string> Categorize(ITrade trade, DateTime referenceDate)
         {
-            _categories = new List<ICategory>
-            {
-                new ExpiredCategory(),
-                new HighRiskCategory(),
-                new MediumRiskCategory()
-            };
-        }
-
-        public CategorizerService(List<ICategory> categories)
-        {
-            _categories = categories;
-        }
-
-        public string Categorize(ITrade trade, DateTime referenceDate)
-        {
-            foreach (var category in _categories)
-            {
-                if (category.IsMatch(trade, referenceDate))
+            var categories = await _categoryService.GetCategoriesAsync(referenceDate);
+            foreach (var category in categories)
+            {     
+                if (category.CompiledRule(trade, referenceDate))
                 {
                     return category.Name;
                 }

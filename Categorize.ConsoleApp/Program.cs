@@ -1,16 +1,16 @@
 ﻿using Categorize.Application.Interfaces;
 using Categorize.Application.Services;
-using Categorize.Domain.Categories;
 using Categorize.Domain.Entities;
 using Categorize.Domain.Interfaces;
+using Categorize.Domain.Interfaces.Repositories;
+using Categorize.Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using System.Globalization;
 
 var serviceProvider = new ServiceCollection()
-                .AddSingleton<ICategory, ExpiredCategory>()
-                .AddSingleton<ICategory, HighRiskCategory>()
-                .AddSingleton<ICategory, MediumRiskCategory>()
+                .AddSingleton<ICategoryRepository>(sp => new CategoryRepository(Path.Combine(AppContext.BaseDirectory, "Database\\db.json")))
                 .AddSingleton<ICategorizerService, CategorizerService>()
+                .AddSingleton<ICategoryService, CategoryService>()
                 .BuildServiceProvider();
 try
 {
@@ -24,7 +24,6 @@ try
 
     for (int i = 0; i < n; i++)
     {
-        //Console.Write($"Enter trade {i + 1} details (Value ClientSector NextPaymentDate): ");
         var tradeDetails = Console.ReadLine().Split(' ');
         double value = double.Parse(tradeDetails[0]);
         string clientSector = tradeDetails[1];
@@ -37,7 +36,7 @@ try
     Console.WriteLine("Trade categories:");
     foreach (var trade in trades)
     {
-        Console.WriteLine(categorizer.Categorize(trade, referenceDate));
+        Console.WriteLine(await categorizer.Categorize(trade, referenceDate));
     }
 }
 catch (Exception ex)

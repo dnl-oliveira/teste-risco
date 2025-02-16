@@ -1,106 +1,103 @@
 ﻿using Categorize.Application.Interfaces;
 using Categorize.Application.Services;
-using Categorize.Domain.Categories;
 using Categorize.Domain.Interfaces;
 using Moq;
+using Categorize.Domain.Models;
 
 namespace Categorize.Tests
 {
     public class CategorizerTests
     {
-        private readonly Mock<ICategory> _expiredCategoryMock;
-        private readonly Mock<ICategory> _highRiskCategoryMock;
-        private readonly Mock<ICategory> _mediumRiskCategoryMock;
+        private readonly Mock<ICategoryService> _categoryServiceMock;
         private readonly ICategorizerService _categorizerService;
 
         public CategorizerTests()
         {
-            _expiredCategoryMock = new Mock<ICategory>();
-            _expiredCategoryMock.Setup(c => c.Name).Returns("EXPIRED");
-
-            _highRiskCategoryMock = new Mock<ICategory>();
-            _highRiskCategoryMock.Setup(c => c.Name).Returns("HIGHRISK");
-
-            _mediumRiskCategoryMock = new Mock<ICategory>();
-            _mediumRiskCategoryMock.Setup(c => c.Name).Returns("MEDIUMRISK");
-
-            var categories = new List<ICategory>
-            {
-                _expiredCategoryMock.Object,
-                _highRiskCategoryMock.Object,
-                _mediumRiskCategoryMock.Object
-            };
-
-            _categorizerService = new CategorizerService(categories);
+            _categoryServiceMock = new Mock<ICategoryService>();
+            _categorizerService = new CategorizerService(_categoryServiceMock.Object);
         }
 
         [Fact]
-        public void Categorize_ShouldReturnExpired()
+        public async Task Categorize_ShouldReturnExpiredAsync()
         {
             // Arrange
             var tradeMock = new Mock<ITrade>();
             tradeMock.Setup(t => t.NextPaymentDate).Returns(new DateTime(2020, 11, 01));
-
             var referenceDate = new DateTime(2021, 01, 01);
 
-            _expiredCategoryMock.Setup(c => c.IsMatch(tradeMock.Object, referenceDate)).Returns(true);
+            var categories = new List<Category>
+            {
+                new Category { Name = "EXPIRED", CompiledRule = (trade, date) => trade.NextPaymentDate < date.AddDays(-30) }
+            };
+
+            _categoryServiceMock.Setup(cs => cs.GetCategoriesAsync(referenceDate)).ReturnsAsync(categories);
 
             // Act
-            var result = _categorizerService.Categorize(tradeMock.Object, referenceDate);
+            var result = await _categorizerService.Categorize(tradeMock.Object, referenceDate);
 
             // Assert
             Assert.Equal("EXPIRED", result);
         }
 
         [Fact]
-        public void Categorize_ShouldReturnHighRisk()
+        public async Task Categorize_ShouldReturnHighRisk()
         {
             // Arrange
             var tradeMock = new Mock<ITrade>();
+            tradeMock.Setup(t => t.Value).Returns(2000000);
+            tradeMock.Setup(t => t.ClientSector).Returns("Private");
             var referenceDate = new DateTime(2021, 01, 01);
 
-            _expiredCategoryMock.Setup(c => c.IsMatch(tradeMock.Object, referenceDate)).Returns(false);
-            _highRiskCategoryMock.Setup(c => c.IsMatch(tradeMock.Object, referenceDate)).Returns(true);
-            _mediumRiskCategoryMock.Setup(c => c.IsMatch(tradeMock.Object, referenceDate)).Returns(false);
+            var categories = new List<Category>
+            {
+                new Category { Name = "HIGHRISK", CompiledRule = (trade, date) => trade.Value > 1000000 && trade.ClientSector == "Private" }
+            };
+
+            _categoryServiceMock.Setup(cs => cs.GetCategoriesAsync(referenceDate)).ReturnsAsync(categories);
 
             // Act
-            var result = _categorizerService.Categorize(tradeMock.Object, referenceDate);
+            var result = await _categorizerService.Categorize(tradeMock.Object, referenceDate);
 
             // Assert
             Assert.Equal("HIGHRISK", result);
         }
 
         [Fact]
-        public void Categorize_ShouldReturnMediumRisk()
+        public async Task Categorize_ShouldReturnMediumRisk()
         {
             // Arrange
             var tradeMock = new Mock<ITrade>();
+            tradeMock.Setup(t => t.Value).Returns(2000000);
+            tradeMock.Setup(t => t.ClientSector).Returns("Public");
             var referenceDate = new DateTime(2021, 01, 01);
 
-            _expiredCategoryMock.Setup(c => c.IsMatch(tradeMock.Object, referenceDate)).Returns(false);
-            _highRiskCategoryMock.Setup(c => c.IsMatch(tradeMock.Object, referenceDate)).Returns(false);
-            _mediumRiskCategoryMock.Setup(c => c.IsMatch(tradeMock.Object, referenceDate)).Returns(true);
+            var categories = new List<Category>
+            {
+                new Category { Name = "MEDIUMRISK", CompiledRule = (trade, date) => trade.Value > 1000000 && trade.ClientSector == "Public" }
+            };
+
+            _categoryServiceMock.Setup(cs => cs.GetCategoriesAsync(referenceDate)).ReturnsAsync(categories);
 
             // Act
-            var result = _categorizerService.Categorize(tradeMock.Object, referenceDate);
+            var result = await _categorizerService.Categorize(tradeMock.Object, referenceDate);
 
             // Assert
             Assert.Equal("MEDIUMRISK", result);
         }
 
         [Fact]
-        public void Categorize_ShouldReturnUndefined()
+        public async Task Categorize_ShouldReturnUndefined()
         {
             // Arrange
             var tradeMock = new Mock<ITrade>();
             var referenceDate = new DateTime(2021, 01, 01);
 
-            _expiredCategoryMock.Setup(c => c.IsMatch(tradeMock.Object, referenceDate)).Returns(false);
-            _highRiskCategoryMock.Setup(c => c.IsMatch(tradeMock.Object, referenceDate)).Returns(false);
-            _mediumRiskCategoryMock.Setup(c => c.IsMatch(tradeMock.Object, referenceDate)).Returns(false);
+            var categories = new List<Category>();
+
+            _categoryServiceMock.Setup(cs => cs.GetCategoriesAsync(referenceDate)).ReturnsAsync(categories);
 
             // Act
-            var result = _categorizerService.Categorize(tradeMock.Object, referenceDate);
+            var result = await _categorizerService.Categorize(tradeMock.Object, referenceDate);
 
             // Assert
             Assert.Equal("UNDEFINED", result);

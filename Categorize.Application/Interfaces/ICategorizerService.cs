@@ -9,6 +9,6 @@ namespace Categorize.Application.Interfaces
 {
     public interface ICategorizerService
     {
-        string Categorize(ITrade trade, DateTime referenceDate);
+        Task<string> Categorize(ITrade trade, DateTime referenceDate);
     }
 }
