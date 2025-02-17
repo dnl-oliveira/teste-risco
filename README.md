@@ -17,6 +17,7 @@ O projeto segue os princípios da arquitetura limpa, dividindo o código em vár
 - **Application**: Contém interfaces e serviços de aplicação.
 - **Domain**: Contém entidades de domínio e regras de negócio.
 - **Infrastructure**: Contém a infraestrutura de dados e o repositório de categorias.
+- **IoC**: Contém a configuração da injeção de dependências
 
 ## Exemplo de Uso
 

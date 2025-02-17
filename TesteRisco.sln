@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Categorize.Tests", "Categor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Categorize.Infrastructure", "Categorize.Infrastructure\Categorize.Infrastructure.csproj", "{959CCD12-9274-40E3-AF9D-16674A1CAEF4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Categorize.IoC", "Categorize.IoC\Categorize.IoC.csproj", "{CBE7BF81-2F82-4687-95DB-45ED58607796}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{959CCD12-9274-40E3-AF9D-16674A1CAEF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{959CCD12-9274-40E3-AF9D-16674A1CAEF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{959CCD12-9274-40E3-AF9D-16674A1CAEF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBE7BF81-2F82-4687-95DB-45ED58607796}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBE7BF81-2F82-4687-95DB-45ED58607796}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBE7BF81-2F82-4687-95DB-45ED58607796}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBE7BF81-2F82-4687-95DB-45ED58607796}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,6 +59,7 @@ Global
 		{8B0B03E8-48C9-4A1D-ACBC-A4B33B2A524E} = {B20231E8-7DC6-4002-8459-ABAC1DC8D867}
 		{BC437B7A-28AB-47F5-867C-FD88640296C9} = {5D3060D0-A817-408C-88D5-E74E8F040D40}
 		{959CCD12-9274-40E3-AF9D-16674A1CAEF4} = {B20231E8-7DC6-4002-8459-ABAC1DC8D867}
+		{CBE7BF81-2F82-4687-95DB-45ED58607796} = {B20231E8-7DC6-4002-8459-ABAC1DC8D867}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {15C333C3-DE5A-4822-A320-A33ACA7087C0}
